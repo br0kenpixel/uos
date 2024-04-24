@@ -6,6 +6,7 @@ use core::{
     fmt::{self, Write},
     ptr, slice,
 };
+use log::LevelFilter;
 use noto_sans_mono_bitmap::{get_bitmap, get_bitmap_width, BitmapChar, BitmapHeight, FontWeight};
 use spinning_top::Spinlock;
 
@@ -25,6 +26,7 @@ impl KernelLogger {
         let logger = LOGGER.get_or_init(move || Self::new(framebuffer, info));
 
         log::set_logger(logger);
+        log::set_max_level(LevelFilter::Debug);
         log::info!("Kernel logger initialized");
     }
 

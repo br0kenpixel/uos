@@ -18,7 +18,7 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let buffer = framebuf.into_buffer();
 
     KernelLogger::init(buffer, info);
-    
+
     info!("Hello, world!");
 
     loop {}
