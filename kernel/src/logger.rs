@@ -27,7 +27,7 @@ impl KernelLogger {
 
         log::set_logger(logger);
         log::set_max_level(LevelFilter::Debug);
-        log::info!("Kernel logger initialized");
+        log::debug!("Kernel logger initialized");
     }
 
     /// Create a new instance that logs to the given framebuffer.
