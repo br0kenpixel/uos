@@ -3,9 +3,10 @@
 #![allow(unused, dead_code)]
 
 mod logger;
+mod mem_stats;
 mod memreg_ex;
 
-use crate::{logger::KernelLogger, memreg_ex::MemoryRegionEx};
+use crate::{logger::KernelLogger, mem_stats::mem_stats, memreg_ex::MemoryRegionEx};
 use bootloader_api::{
     config::Mapping,
     info::{FrameBuffer, MemoryRegionKind, PixelFormat},
@@ -21,6 +22,7 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     KernelLogger::init(buffer, info);
 
     info!("Hello, world!");
+    mem_stats(&boot_info.memory_regions);
 
     loop {}
 }
