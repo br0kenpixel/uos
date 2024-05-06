@@ -12,7 +12,7 @@ use bootloader_api::{
     info::{FrameBuffer, MemoryRegionKind, PixelFormat},
     BootInfo,
 };
-use core::{panic::PanicInfo, ptr};
+use core::{arch::asm, panic::PanicInfo, ptr};
 use log::{debug, info, LevelFilter, Log};
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
@@ -24,7 +24,11 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     info!("Hello, world!");
     mem_stats(&boot_info.memory_regions);
 
-    loop {}
+    loop {
+        unsafe {
+            asm!("NOP");
+        }
+    }
 }
 
 #[panic_handler]
