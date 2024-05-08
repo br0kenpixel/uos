@@ -1,9 +1,8 @@
+use super::alloc_entry::AllocEntry;
 use crate::memreg_ex::MemoryRegionEx;
 use bootloader_api::info::MemoryRegion;
-use core::{mem::size_of, ptr::slice_from_raw_parts_mut, slice};
+use core::{mem::size_of, ops::Add, ptr::slice_from_raw_parts_mut, slice};
 use log::debug;
-
-type AllocEntry = Option<MemoryRegion>;
 
 pub const ALLOC_ENTRY_SIZE: usize = size_of::<AllocEntry>();
 
@@ -35,11 +34,11 @@ impl RegionAllocator {
         let n_allocs = allocs_space.len() / size_of::<AllocEntry>();
 
         let raw_allocs_ptr = allocs_space.as_mut_ptr();
-        let allocs_ptr = raw_allocs_ptr as *mut AllocEntry;
+        let allocs_ptr = raw_allocs_ptr.cast::<AllocEntry>();
         let n_allocs = unsafe { slice::from_raw_parts_mut(allocs_ptr, n_allocs) };
 
         mem_space.fill(0);
-        n_allocs.fill(None);
+        n_allocs.fill(AllocEntry::EMPTY);
 
         Self {
             mem: mem_space,
@@ -62,8 +61,8 @@ impl RegionAllocator {
     pub fn in_use(&self) -> usize {
         self.allocs
             .iter()
-            .flatten()
-            .map(|region| region.size())
+            .filter(|entry| entry.is_some())
+            .map(MemoryRegionEx::size)
             .sum()
     }
 }

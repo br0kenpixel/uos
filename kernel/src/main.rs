@@ -1,6 +1,6 @@
 #![no_std]
 #![no_main]
-#![allow(unused, dead_code)]
+#![allow(unused, dead_code, clippy::module_name_repetitions)]
 #![feature(const_trait_impl)]
 
 mod kalloc;
