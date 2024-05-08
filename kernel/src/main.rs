@@ -9,21 +9,14 @@ mod mem_stats;
 mod memreg_ex;
 
 use crate::{
-    kalloc::{RegionAllocator, ALLOC_ENTRY_SIZE},
-    logger::KernelLogger,
-    mem_stats::mem_stats,
-    memreg_ex::MemoryRegionEx,
+    kalloc::RegionAllocator, logger::KernelLogger, mem_stats::mem_stats, memreg_ex::MemoryRegionEx,
 };
-use bootloader_api::{
-    config::Mapping,
-    info::{FrameBuffer, MemoryRegionKind, PixelFormat},
-    BootInfo,
-};
-use core::{arch::asm, panic::PanicInfo, ptr};
-use log::{debug, info, LevelFilter, Log};
+use bootloader_api::{config::Mapping, info::MemoryRegionKind, BootInfo};
+use core::{arch::asm, panic::PanicInfo};
+use log::{debug, info};
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    let mut framebuf = boot_info.framebuffer.take().unwrap();
+    let framebuf = boot_info.framebuffer.take().unwrap();
     let info = framebuf.info();
     let buffer = framebuf.into_buffer();
     KernelLogger::init(buffer, info);

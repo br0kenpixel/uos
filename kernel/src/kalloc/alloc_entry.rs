@@ -1,6 +1,6 @@
 use crate::memreg_ex::MemoryRegionEx;
 use bootloader_api::info::MemoryRegion;
-use core::{mem::MaybeUninit, ops::Deref, ptr::NonNull};
+use core::mem::MaybeUninit;
 
 #[derive(Clone, Copy)]
 #[repr(packed(1))]
@@ -41,9 +41,5 @@ impl MemoryRegionEx for AllocEntry {
         assert!(!self.empty);
 
         (unsafe { self.end.assume_init() - self.start.assume_init() }) as usize
-    }
-
-    fn into_ptr(self) -> NonNull<u8> {
-        unimplemented!()
     }
 }

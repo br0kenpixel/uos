@@ -1,8 +1,7 @@
 use super::alloc_entry::AllocEntry;
 use crate::memreg_ex::MemoryRegionEx;
 use bootloader_api::info::MemoryRegion;
-use core::{mem::size_of, ops::Add, ptr::slice_from_raw_parts_mut, slice};
-use log::debug;
+use core::{mem::size_of, slice};
 
 pub const ALLOC_ENTRY_SIZE: usize = size_of::<AllocEntry>();
 
@@ -13,7 +12,7 @@ pub struct RegionAllocator {
 
 impl RegionAllocator {
     pub fn new(region: MemoryRegion, phys_mem_offset: u64, n_allocs: usize) -> Self {
-        let reserve_bytes = size_of::<AllocEntry>() * n_allocs;
+        let reserve_bytes = ALLOC_ENTRY_SIZE * n_allocs;
 
         Self::new_raw(region, phys_mem_offset, reserve_bytes)
     }
@@ -31,7 +30,7 @@ impl RegionAllocator {
         let region_split = region_slice.split_at_mut(reserve_bytes);
         let mem_space = region_split.1;
         let allocs_space = region_split.0;
-        let n_allocs = allocs_space.len() / size_of::<AllocEntry>();
+        let n_allocs = allocs_space.len() / ALLOC_ENTRY_SIZE;
 
         let raw_allocs_ptr = allocs_space.as_mut_ptr();
         let allocs_ptr = raw_allocs_ptr.cast::<AllocEntry>();
