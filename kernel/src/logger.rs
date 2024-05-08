@@ -10,6 +10,8 @@ use log::LevelFilter;
 use noto_sans_mono_bitmap::{get_bitmap, get_bitmap_width, BitmapChar, BitmapHeight, FontWeight};
 use spinning_top::Spinlock;
 
+const BITMAP_LETTER_WIDTH: usize = get_bitmap_width(FontWeight::Regular, BitmapHeight::Size14);
+
 /// The global logger instance used for the `log` crate.
 pub static LOGGER: OnceCell<KernelLogger> = OnceCell::uninit();
 
@@ -80,7 +82,7 @@ impl Logger {
 
     fn newline(&mut self) {
         self.y_pos += 14 + LINE_SPACING;
-        self.carriage_return()
+        self.carriage_return();
     }
 
     fn add_vspace(&mut self, space: usize) {
@@ -98,11 +100,11 @@ impl Logger {
         self.framebuffer.fill(0);
     }
 
-    fn width(&self) -> usize {
+    const fn width(&self) -> usize {
         self.info.width
     }
 
-    fn height(&self) -> usize {
+    const fn height(&self) -> usize {
         self.info.height
     }
 
@@ -114,8 +116,7 @@ impl Logger {
                 if self.x_pos >= self.width() {
                     self.newline();
                 }
-                const BITMAP_LETTER_WIDTH: usize =
-                    get_bitmap_width(FontWeight::Regular, BitmapHeight::Size14);
+
                 if self.y_pos >= (self.height() - BITMAP_LETTER_WIDTH) {
                     self.clear();
                 }
