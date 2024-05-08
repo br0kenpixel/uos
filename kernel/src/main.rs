@@ -1,12 +1,19 @@
 #![no_std]
 #![no_main]
 #![allow(unused, dead_code)]
+#![feature(const_trait_impl)]
 
+mod kalloc;
 mod logger;
 mod mem_stats;
 mod memreg_ex;
 
-use crate::{logger::KernelLogger, mem_stats::mem_stats, memreg_ex::MemoryRegionEx};
+use crate::{
+    kalloc::{RegionAllocator, ALLOC_ENTRY_SIZE},
+    logger::KernelLogger,
+    mem_stats::mem_stats,
+    memreg_ex::MemoryRegionEx,
+};
 use bootloader_api::{
     config::Mapping,
     info::{FrameBuffer, MemoryRegionKind, PixelFormat},
@@ -23,6 +30,19 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 
     info!("Hello, world!");
     mem_stats(&boot_info.memory_regions);
+
+    let mem = boot_info
+        .memory_regions
+        .iter()
+        .filter(|region| region.kind == MemoryRegionKind::Usable)
+        .max_by_key(|region| region.size())
+        .unwrap();
+    debug!("{mem:#?}");
+
+    let phys_offset = boot_info.physical_memory_offset.into_option().unwrap();
+    debug!("Physical memory starts at 0x{:X}", phys_offset);
+
+    let ralloc = RegionAllocator::new(*mem, phys_offset, 10);
 
     loop {
         unsafe {
