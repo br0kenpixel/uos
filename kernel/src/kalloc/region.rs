@@ -3,16 +3,18 @@ use bootloader_api::info::MemoryRegion;
 use core::{mem::size_of, ptr::slice_from_raw_parts_mut, slice};
 use log::debug;
 
-pub const ALLOC_ENTRY_SIZE: usize = size_of::<Option<MemoryRegion>>();
+type AllocEntry = Option<MemoryRegion>;
+
+pub const ALLOC_ENTRY_SIZE: usize = size_of::<AllocEntry>();
 
 pub struct RegionAllocator {
     mem: &'static mut [u8],
-    allocs: &'static mut [Option<MemoryRegion>],
+    allocs: &'static mut [AllocEntry],
 }
 
 impl RegionAllocator {
     pub fn new(region: MemoryRegion, phys_mem_offset: u64, n_allocs: usize) -> Self {
-        let reserve_bytes = size_of::<Option<MemoryRegion>>() * n_allocs;
+        let reserve_bytes = size_of::<AllocEntry>() * n_allocs;
 
         Self::new_raw(region, phys_mem_offset, reserve_bytes)
     }
@@ -30,10 +32,10 @@ impl RegionAllocator {
         let region_split = region_slice.split_at_mut(reserve_bytes);
         let mem_space = region_split.1;
         let allocs_space = region_split.0;
-        let n_allocs = allocs_space.len() / size_of::<Option<MemoryRegion>>();
+        let n_allocs = allocs_space.len() / size_of::<AllocEntry>();
 
         let raw_allocs_ptr = allocs_space.as_mut_ptr();
-        let allocs_ptr = raw_allocs_ptr as *mut Option<MemoryRegion>;
+        let allocs_ptr = raw_allocs_ptr as *mut AllocEntry;
         let n_allocs = unsafe { slice::from_raw_parts_mut(allocs_ptr, n_allocs) };
 
         mem_space.fill(0);
