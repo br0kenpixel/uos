@@ -4,14 +4,15 @@
 #![feature(allocator_api)]
 #![feature(strict_provenance)]
 
-//extern crate alloc;
+extern crate alloc;
 
 mod logger;
 mod mem_stats;
 mod memreg_ex;
 
 use crate::{logger::KernelLogger, mem_stats::mem_stats, memreg_ex::MemoryRegionEx};
-use alloc_impl::{kernel::KernelAllocator, region::RegionAllocator};
+use alloc::{string::String, vec};
+use alloc_impl::{kernel::KernelAllocator, region::RegionAllocator, ALLOCATOR};
 use bootloader_api::{
     config::Mapping,
     info::{FrameBuffer, MemoryRegionKind, PixelFormat},
@@ -28,13 +29,21 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let buffer = framebuf.into_buffer();
     KernelLogger::init(buffer, info);
 
-    let allocator = KernelAllocator::new(
-        &boot_info.memory_regions,
-        boot_info.physical_memory_offset.into_option().unwrap(),
-    );
+    {
+        let allocator = KernelAllocator::new(
+            &boot_info.memory_regions,
+            boot_info.physical_memory_offset.into_option().unwrap(),
+        );
+
+        ALLOCATOR.init(allocator);
+        debug!("Heap initialized");
+    }
 
     info!("Hello, world!");
     mem_stats(&boot_info.memory_regions);
+
+    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let text = String::from("Hello, World! This is some example text! :)");
 
     loop {
         unsafe {
