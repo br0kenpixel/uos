@@ -9,3 +9,4 @@ conquer-once = { version = "0.4.0", default-features = false }
 log = "0.4.21"
 noto-sans-mono-bitmap = { version = "0.1.2", features = ["size_24"] }
 spinning_top = "0.3.0"
+linked_list_allocator = "0.10.5"
