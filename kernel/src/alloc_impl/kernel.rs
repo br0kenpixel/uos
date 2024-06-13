@@ -59,7 +59,7 @@ unsafe impl Allocator for KernelAllocator {
     unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
         for allocator in self.allocators() {
             let allocator_region =
-                (allocator.region().start as usize)..(allocator.region().end as usize);
+                (allocator.metadata().start() as usize)..(allocator.metadata().end() as usize);
 
             if allocator_region.contains(&ptr.addr().get()) {
                 allocator.deallocate(ptr, layout);

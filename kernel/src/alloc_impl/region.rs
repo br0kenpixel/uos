@@ -1,3 +1,4 @@
+use super::meta::AllocationMetadata;
 use crate::memreg_ex::MemoryRegionEx;
 use bootloader_api::info::MemoryRegion;
 use core::{
@@ -7,7 +8,7 @@ use core::{
 use linked_list_allocator::LockedHeap;
 use log::debug;
 
-pub struct RegionAllocator(LockedHeap, MemoryRegion);
+pub struct RegionAllocator(LockedHeap, AllocationMetadata);
 
 impl RegionAllocator {
     pub fn new(region: MemoryRegion, phys_mem_offset: u64) -> Self {
@@ -26,10 +27,10 @@ impl RegionAllocator {
         let heap_slice = region.as_slice(phys_mem_offset);
         let heap = unsafe { LockedHeap::new(heap_slice.as_mut_ptr(), heap_slice.len()) };
 
-        Self(heap, modified_region)
+        Self(heap, modified_region.into())
     }
 
-    pub const fn region(&self) -> &MemoryRegion {
+    pub const fn metadata(&self) -> &AllocationMetadata {
         &self.1
     }
 }
@@ -39,7 +40,8 @@ unsafe impl Allocator for RegionAllocator {
         let size = layout.size() + layout.align();
         debug!(
             "region_allocd: Allocating {}B at 0x{:X}",
-            size, self.1.start
+            size,
+            self.metadata().start()
         );
 
         let result = self
@@ -58,7 +60,7 @@ unsafe impl Allocator for RegionAllocator {
         debug!(
             "region_allocd: Freeing {:X} at 0x{:X}",
             ptr.addr(),
-            self.1.start
+            self.metadata().start()
         );
         self.0.lock().deallocate(ptr, layout);
     }

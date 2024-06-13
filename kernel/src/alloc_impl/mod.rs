@@ -1,6 +1,7 @@
 use os::OsAllocator;
 
 pub mod kernel;
+mod meta;
 pub mod os;
 pub mod region;
 
