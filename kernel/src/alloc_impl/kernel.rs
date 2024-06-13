@@ -23,8 +23,8 @@ impl KernelAllocator {
             }
 
             if i == MAX_MEM_REGIONS {
-                break;
                 warn!("kernel_allocd: Breaking allocation creation, no free slots left");
+                break;
             }
 
             allocators[i] = Some(RegionAllocator::new(*region, phys_mem_offset));
@@ -48,7 +48,7 @@ unsafe impl Allocator for KernelAllocator {
     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
         for allocator in self.allocators() {
             match allocator.allocate(layout) {
-                Ok((ptr)) => return Ok(ptr),
+                Ok(ptr) => return Ok(ptr),
                 Err(_) => continue,
             }
         }

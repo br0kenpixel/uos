@@ -1,8 +1,5 @@
 use bootloader_api::info::MemoryRegion;
-use core::{
-    ptr::{self, slice_from_raw_parts_mut, NonNull},
-    slice,
-};
+use core::slice;
 
 pub trait MemoryRegionEx {
     fn size(&self) -> usize;

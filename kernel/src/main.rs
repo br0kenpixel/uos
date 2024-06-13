@@ -1,6 +1,6 @@
 #![no_std]
 #![no_main]
-#![allow(unused, dead_code)]
+//#![allow(unused, dead_code)]
 #![feature(allocator_api)]
 #![feature(strict_provenance)]
 
@@ -10,21 +10,17 @@ mod logger;
 mod mem_stats;
 mod memreg_ex;
 
-use crate::{logger::KernelLogger, mem_stats::mem_stats, memreg_ex::MemoryRegionEx};
+use crate::{logger::KernelLogger, mem_stats::mem_stats};
 use alloc::{string::String, vec};
-use alloc_impl::{kernel::KernelAllocator, region::RegionAllocator, ALLOCATOR};
-use bootloader_api::{
-    config::Mapping,
-    info::{FrameBuffer, MemoryRegionKind, PixelFormat},
-    BootInfo,
-};
-use core::{arch::asm, panic::PanicInfo, ptr};
-use log::{debug, info, LevelFilter, Log};
+use alloc_impl::{kernel::KernelAllocator, ALLOCATOR};
+use bootloader_api::{config::Mapping, BootInfo};
+use core::{arch::asm, panic::PanicInfo};
+use log::{debug, info};
 
 mod alloc_impl;
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    let mut framebuf = boot_info.framebuffer.take().unwrap();
+    let framebuf = boot_info.framebuffer.take().unwrap();
     let info = framebuf.info();
     let buffer = framebuf.into_buffer();
     KernelLogger::init(buffer, info);
@@ -42,8 +38,8 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     info!("Hello, world!");
     mem_stats(&boot_info.memory_regions);
 
-    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let text = String::from("Hello, World! This is some example text! :)");
+    let _numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let _text = String::from("Hello, World! This is some example text! :)");
 
     loop {
         unsafe {

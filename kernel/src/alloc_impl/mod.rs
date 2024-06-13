@@ -1,4 +1,3 @@
-use linked_list_allocator::LockedHeap;
 use os::OsAllocator;
 
 pub mod kernel;

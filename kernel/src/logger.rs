@@ -4,7 +4,7 @@ use bootloader_api::info::{FrameBufferInfo, PixelFormat};
 use conquer_once::spin::OnceCell;
 use core::{
     fmt::{self, Write},
-    ptr, slice,
+    ptr,
 };
 use log::LevelFilter;
 use noto_sans_mono_bitmap::{get_bitmap, get_bitmap_width, BitmapChar, BitmapHeight, FontWeight};
@@ -25,7 +25,7 @@ impl KernelLogger {
     pub fn init(framebuffer: &'static mut [u8], info: FrameBufferInfo) {
         let logger = LOGGER.get_or_init(move || Self::new(framebuffer, info));
 
-        log::set_logger(logger);
+        let _ = log::set_logger(logger);
         log::set_max_level(LevelFilter::Debug);
         log::debug!("Kernel logger initialized");
     }

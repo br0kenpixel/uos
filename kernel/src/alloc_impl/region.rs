@@ -3,7 +3,6 @@ use bootloader_api::info::MemoryRegion;
 use core::{
     alloc::{AllocError, Allocator, Layout},
     ptr::{self, NonNull},
-    slice,
 };
 use linked_list_allocator::LockedHeap;
 use log::debug;
@@ -25,7 +24,7 @@ impl RegionAllocator {
         );
 
         let heap_slice = region.as_slice(phys_mem_offset);
-        let mut heap = unsafe { LockedHeap::new(heap_slice.as_mut_ptr(), heap_slice.len()) };
+        let heap = unsafe { LockedHeap::new(heap_slice.as_mut_ptr(), heap_slice.len()) };
 
         Self(heap, modified_region)
     }
