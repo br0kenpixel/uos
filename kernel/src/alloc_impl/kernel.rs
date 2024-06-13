@@ -17,7 +17,7 @@ impl KernelAllocator {
 
         let mut allocators = [EMPTY_ALLOC_SLOT; MAX_MEM_REGIONS];
         let mut i = 0;
-        for region in region_allocs.iter() {
+        for region in region_allocs {
             if region.kind != MemoryRegionKind::Usable {
                 continue;
             }

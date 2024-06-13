@@ -46,7 +46,7 @@ unsafe impl Allocator for RegionAllocator {
             .0
             .lock()
             .allocate_first_fit(layout)
-            .map_err(|_| AllocError)?;
+            .map_err(|()| AllocError)?;
 
         let slice = ptr::slice_from_raw_parts_mut(result.as_ptr(), size);
         let nonnull = unsafe { NonNull::new_unchecked(slice) };
