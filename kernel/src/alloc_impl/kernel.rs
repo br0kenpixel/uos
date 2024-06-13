@@ -6,7 +6,7 @@ use core::{
 };
 use log::{debug, warn};
 
-const MAX_MEM_REGIONS: usize = 256;
+const MAX_MEM_REGIONS: usize = 4096;
 const EMPTY_ALLOC_SLOT: Option<RegionAllocator> = Option::<RegionAllocator>::None;
 pub struct KernelAllocator([Option<RegionAllocator>; MAX_MEM_REGIONS]);
 
