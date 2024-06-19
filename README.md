@@ -1,5 +1,5 @@
 # MicroOS
-A small "Hello, World" operating system.
+A small "Hello, World" operating system / kernel.
 
 External requirements:
 - QEMU
