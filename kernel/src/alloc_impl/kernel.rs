@@ -1,4 +1,5 @@
 use super::region::RegionAllocator;
+use crate::memreg_ex::MemoryRegionEx;
 use bootloader_api::info::{MemoryRegion, MemoryRegionKind};
 use core::{
     alloc::{AllocError, Allocator, Layout},
@@ -41,6 +42,10 @@ impl KernelAllocator {
             .iter()
             .filter(|slot| slot.is_some())
             .map(|slot| unsafe { slot.as_ref().unwrap_unchecked() })
+    }
+
+    pub fn total_mem(&self) -> usize {
+        self.allocators().map(|alloc| alloc.metadata().size()).sum()
     }
 }
 

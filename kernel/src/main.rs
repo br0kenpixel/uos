@@ -30,9 +30,10 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
             &boot_info.memory_regions,
             boot_info.physical_memory_offset.into_option().unwrap(),
         );
+        let size = allocator.total_mem();
 
         ALLOCATOR.init(allocator);
-        debug!("Heap initialized");
+        debug!("Heap initialized, total memory: {size}B");
     }
 
     info!("Hello, world!");
