@@ -50,23 +50,19 @@ impl Default for CpuInfo {
 }
 
 fn get_logical_cores() -> u8 {
-    // Call __cpuid with eax = 1 to get processor info and feature bits
-    let result = unsafe { __cpuid(1) };
+    let result = safe_cpuid(RequestType::Features);
 
-    // The number of logical processors per physical processor package is given by bits 16-23 of EBX
     ((result.ebx >> 16) & 0xff) as u8
 }
 
 fn get_physical_cores() -> u8 {
-    // Call __cpuid with eax = 4 and ecx = 0 to get cache and TLB information
-    let result = unsafe { __cpuid_count(4, 0) };
+    let result = safe_cpuid_count(RequestType::Cache, 0);
 
-    // The number of cores (plus one) is given by bits 26-31 of EAX
     (((result.eax >> 26) & 0x3f) + 1) as u8
 }
 
 fn read_vendor_string() -> [u8; VENDOR_LENGTH] {
-    let result = unsafe { __cpuid(0) };
+    let result = safe_cpuid(RequestType::Vendor);
 
     [
         (result.ebx as u8) as u8,
@@ -114,4 +110,8 @@ fn cpuid_result_to_bytes(res: CpuidResult) -> [u8; 16] {
 
 fn safe_cpuid(req: RequestType) -> CpuidResult {
     unsafe { __cpuid(req as u32) }
+}
+
+fn safe_cpuid_count(req: RequestType, sub_leaf: u32) -> CpuidResult {
+    unsafe { __cpuid_count(req as u32, sub_leaf) }
 }
