@@ -1,6 +1,11 @@
 # MicroOS
 A small "Hello, World" operating system / kernel.
 
+Implemented features:
+- [x] Heap allocation
+- [x] Basic CPU detection
+- [x] Logger
+
 External requirements:
 - QEMU
 
