@@ -7,6 +7,7 @@
 extern crate alloc;
 
 mod cpuid;
+mod heapless;
 mod logger;
 mod mem_stats;
 mod memreg_ex;
@@ -44,8 +45,8 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let _text = String::from("Hello, World! This is some example text! :)");
 
     let cpu = cpuid::CpuInfo::default();
-    debug!("{}", cpu.brand_string());
-    debug!("{}", cpu.vendor_string());
+    debug!("{}", cpu.brand());
+    debug!("{}", cpu.vendor());
     debug!("{}", cpu.physical_cores());
     debug!("{}", cpu.logical_cores());
 

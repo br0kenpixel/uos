@@ -1,31 +1,29 @@
+use crate::heapless::strings::StackString;
 use core::arch::x86_64::{CpuidResult, __cpuid, __cpuid_count};
 use request::RequestType;
 
 mod request;
 
-const BRAND_STRING_LENGTH: usize = (4 * 4) * 3;
-const VENDOR_STRING_LENGTH: usize = 12;
+const VENDOR_LENGTH: usize = 12;
+const BRAND_LENGTH: usize = (4 * 4) * 3;
+
+pub type Brand = StackString<BRAND_LENGTH>;
+pub type Vendor = StackString<VENDOR_LENGTH>;
 
 pub struct CpuInfo {
-    brand_string: [u8; 48],
-    vendor_string: [u8; 12],
+    brand_string: Brand,
+    vendor_string: Vendor,
     physical_cores: u8,
     logical_cores: u8,
 }
 
 impl CpuInfo {
-    pub fn brand_string(&self) -> &str {
-        let len = self.brand_string_len();
-        let string = core::str::from_utf8(&self.brand_string[..len]).unwrap_or("unknown");
-
-        string
+    pub fn brand(&self) -> &str {
+        &self.brand_string
     }
 
-    pub fn vendor_string(&self) -> &str {
-        let len = self.vendor_string_len();
-        let string = core::str::from_utf8(&self.vendor_string[..len]).unwrap_or("unknown");
-
-        string
+    pub fn vendor(&self) -> &str {
+        &self.vendor_string
     }
 
     pub fn physical_cores(&self) -> u8 {
@@ -35,20 +33,6 @@ impl CpuInfo {
     pub fn logical_cores(&self) -> u8 {
         self.logical_cores
     }
-
-    fn vendor_string_len(&self) -> usize {
-        self.vendor_string
-            .iter()
-            .take_while(|entry| *entry != &0)
-            .count()
-    }
-
-    fn brand_string_len(&self) -> usize {
-        self.brand_string
-            .iter()
-            .take_while(|entry| *entry != &0)
-            .count()
-    }
 }
 
 impl Default for CpuInfo {
@@ -57,8 +41,8 @@ impl Default for CpuInfo {
         let vendor_string_bytes = read_vendor_string();
 
         Self {
-            brand_string: brand_string_bytes,
-            vendor_string: vendor_string_bytes,
+            brand_string: brand_string_bytes.into(),
+            vendor_string: vendor_string_bytes.into(),
             physical_cores: get_physical_cores(),
             logical_cores: get_logical_cores(),
         }
@@ -81,7 +65,7 @@ fn get_physical_cores() -> u8 {
     (((result.eax >> 26) & 0x3f) + 1) as u8
 }
 
-fn read_vendor_string() -> [u8; VENDOR_STRING_LENGTH] {
+fn read_vendor_string() -> [u8; VENDOR_LENGTH] {
     let result = unsafe { __cpuid(0) };
 
     [
@@ -100,8 +84,8 @@ fn read_vendor_string() -> [u8; VENDOR_STRING_LENGTH] {
     ]
 }
 
-fn read_brand_string() -> [u8; BRAND_STRING_LENGTH] {
-    let mut brand_string_bytes = [0; BRAND_STRING_LENGTH];
+fn read_brand_string() -> [u8; BRAND_LENGTH] {
+    let mut brand_string_bytes = [0; BRAND_LENGTH];
 
     let first = cpuid_result_to_bytes(safe_cpuid(RequestType::BrandString1));
     let second = cpuid_result_to_bytes(safe_cpuid(RequestType::BrandString2));
