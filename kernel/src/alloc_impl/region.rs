@@ -7,6 +7,7 @@ use core::{
 };
 use linked_list_allocator::LockedHeap;
 use log::debug;
+use ubyte::ToByteUnit;
 
 pub struct RegionAllocator(LockedHeap, AllocationMetadata);
 
@@ -19,9 +20,9 @@ impl RegionAllocator {
         };
 
         debug!(
-            "region_allocd: Initializing allocator @ 0x{:X} ({}B)",
+            "region_allocd: Initializing allocator @ 0x{:X} ({})",
             modified_region.start,
-            modified_region.size()
+            modified_region.size().bytes()
         );
 
         let heap_slice = region.as_slice(phys_mem_offset);
@@ -39,8 +40,8 @@ unsafe impl Allocator for RegionAllocator {
     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
         let size = layout.size() + layout.align();
         debug!(
-            "region_allocd: Allocating {}B at 0x{:X}",
-            size,
+            "region_allocd: Allocating {} at 0x{:X}",
+            size.bytes(),
             self.metadata().start()
         );
 

@@ -19,6 +19,7 @@ use alloc_impl::{kernel::KernelAllocator, ALLOCATOR};
 use bootloader_api::{config::Mapping, BootInfo};
 use core::{arch::asm, panic::PanicInfo};
 use log::{debug, info};
+use ubyte::ToByteUnit;
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let framebuf = boot_info.framebuffer.take().unwrap();
@@ -34,7 +35,7 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         let size = allocator.total_mem();
 
         ALLOCATOR.init(allocator);
-        debug!("Heap initialized, total memory: {size}B");
+        debug!("Heap initialized, total memory: {}", size.bytes());
     }
 
     info!("Hello, world!");
@@ -43,11 +44,15 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let _numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let _text = String::from("Hello, World! This is some example text! :)");
 
+    debug!("Detecting CPU...");
     let cpu = cpuid::CpuInfo::default();
-    debug!("{}", cpu.brand());
-    debug!("{}", cpu.vendor());
-    debug!("{}", cpu.physical_cores());
-    debug!("{}", cpu.logical_cores());
+    debug!(
+        "CPU: [{}] {}, {}xC {}xT",
+        cpu.vendor(),
+        cpu.brand(),
+        cpu.physical_cores(),
+        cpu.logical_cores()
+    );
 
     loop {
         unsafe {

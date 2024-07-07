@@ -1,7 +1,7 @@
+use crate::memreg_ex::MemoryRegionEx;
 use bootloader_api::info::{MemoryRegion, MemoryRegionKind};
 use log::debug;
-
-use crate::memreg_ex::MemoryRegionEx;
+use ubyte::ToByteUnit;
 
 pub fn mem_stats(regions: &[MemoryRegion]) {
     let mut total_regions = 0;
@@ -26,9 +26,9 @@ pub fn mem_stats(regions: &[MemoryRegion]) {
         regions.len() - usable_regions
     );
     debug!(
-        "Available memory: {}B total, {}B usable, {}B reserved",
-        total_mem,
-        usable_mem,
-        total_mem - usable_mem
+        "Available memory: {} total, {} usable, {} reserved",
+        total_mem.bytes(),
+        usable_mem.bytes(),
+        (total_mem - usable_mem).bytes()
     );
 }
