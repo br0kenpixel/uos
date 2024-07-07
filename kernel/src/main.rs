@@ -6,6 +6,7 @@
 
 extern crate alloc;
 
+mod alloc_impl;
 mod cpuid;
 mod heapless;
 mod logger;
@@ -18,8 +19,6 @@ use alloc_impl::{kernel::KernelAllocator, ALLOCATOR};
 use bootloader_api::{config::Mapping, BootInfo};
 use core::{arch::asm, panic::PanicInfo};
 use log::{debug, info};
-
-mod alloc_impl;
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let framebuf = boot_info.framebuffer.take().unwrap();
