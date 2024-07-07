@@ -15,7 +15,7 @@ pub fn mem_stats(regions: &[MemoryRegion]) {
 
         if region.kind == MemoryRegionKind::Usable {
             usable_regions += 1;
-            usable_mem = region.size();
+            usable_mem += region.size();
         }
     }
 
