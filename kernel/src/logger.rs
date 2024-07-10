@@ -80,7 +80,7 @@ impl Logger {
 
     fn newline(&mut self) {
         self.y_pos += 14 + LINE_SPACING;
-        self.carriage_return()
+        self.carriage_return();
     }
 
     fn add_vspace(&mut self, space: usize) {
@@ -98,11 +98,11 @@ impl Logger {
         self.framebuffer.fill(0);
     }
 
-    fn width(&self) -> usize {
+    const fn width(&self) -> usize {
         self.info.width
     }
 
-    fn height(&self) -> usize {
+    const fn height(&self) -> usize {
         self.info.height
     }
 

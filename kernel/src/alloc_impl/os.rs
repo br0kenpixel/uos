@@ -18,6 +18,7 @@ impl OsAllocator {
     }
 }
 
+#[allow(clippy::significant_drop_tightening)]
 unsafe impl GlobalAlloc for OsAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let guard = self.0.lock();
@@ -25,7 +26,7 @@ unsafe impl GlobalAlloc for OsAllocator {
         let ptr = allocator.allocate(layout).unwrap();
         let ptr = ptr.as_ptr();
 
-        ptr as _
+        ptr.cast()
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {

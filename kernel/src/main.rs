@@ -1,5 +1,6 @@
 #![no_std]
 #![no_main]
+#![allow(clippy::module_name_repetitions, clippy::cast_possible_truncation)]
 //#![allow(unused, dead_code)]
 #![feature(allocator_api)]
 #![feature(strict_provenance)]

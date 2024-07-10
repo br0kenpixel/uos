@@ -18,6 +18,7 @@ impl<const N: usize> StackString<N> {
         unsafe { core::str::from_utf8_unchecked_mut(&mut self.bytes[..self.len]) }
     }
 
+    #[allow(clippy::unused_self)]
     pub const fn capacity(&self) -> usize {
         N
     }
@@ -80,8 +81,7 @@ impl<const N: usize> From<[u8; N]> for StackString<N> {
             .iter()
             .enumerate()
             .find(|(_, byte)| *byte == &0)
-            .map(|(index, _)| index)
-            .unwrap_or(N);
+            .map_or(N, |(index, _)| index);
 
         let mut copy = value;
         copy[length..].fill(0);

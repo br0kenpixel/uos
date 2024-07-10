@@ -27,11 +27,11 @@ impl CpuInfo {
         &self.vendor_string
     }
 
-    pub fn physical_cores(&self) -> u8 {
+    pub const fn physical_cores(&self) -> u8 {
         self.physical_cores
     }
 
-    pub fn logical_cores(&self) -> u8 {
+    pub const fn logical_cores(&self) -> u8 {
         self.logical_cores
     }
 }
