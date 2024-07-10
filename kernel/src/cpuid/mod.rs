@@ -1,5 +1,6 @@
 use crate::heapless::strings::StackString;
 use core::arch::x86_64::{CpuidResult, __cpuid, __cpuid_count};
+use log::debug;
 use request::RequestType;
 
 mod request;
@@ -37,12 +38,19 @@ impl CpuInfo {
 
 impl Default for CpuInfo {
     fn default() -> Self {
-        let brand_string_bytes = read_brand_string();
-        let vendor_string_bytes = read_vendor_string();
+        let mut brand_string: Brand = read_brand_string().into();
+        let vendor_string = read_vendor_string().into();
+
+        if brand_string.starts_with(' ') {
+            debug!("CPU brand string needs cleaning");
+
+            let trimmed = brand_string.trim_start();
+            brand_string = trimmed.try_into().unwrap();
+        }
 
         Self {
-            brand_string: brand_string_bytes.into(),
-            vendor_string: vendor_string_bytes.into(),
+            brand_string,
+            vendor_string,
             physical_cores: get_physical_cores(),
             logical_cores: get_logical_cores(),
         }
