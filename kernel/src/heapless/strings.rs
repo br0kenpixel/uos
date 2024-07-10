@@ -18,6 +18,10 @@ impl<const N: usize> StackString<N> {
         unsafe { core::str::from_utf8_unchecked_mut(&mut self.bytes[..self.len]) }
     }
 
+    pub const fn capacity(&self) -> usize {
+        N
+    }
+
     pub const fn len(&self) -> usize {
         self.len
     }
@@ -29,6 +33,8 @@ impl<const N: usize> StackString<N> {
     pub fn push_byte(&mut self, byte: u8) -> Result<(), ()> {
         let slot = self.next_free_slot_ref().ok_or(())?;
         *slot = byte;
+
+        self.len += 1;
 
         Ok(())
     }
@@ -47,6 +53,24 @@ impl<const N: usize> StackString<N> {
         }
 
         Some(candidate)
+    }
+}
+
+impl<const N: usize> TryFrom<&str> for StackString<N> {
+    type Error = ();
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        if value.len() >= N {
+            return Err(());
+        }
+
+        let mut hs = Self::default();
+
+        for ch in value.chars() {
+            let _ = hs.push(ch);
+        }
+
+        Ok(hs)
     }
 }
 
