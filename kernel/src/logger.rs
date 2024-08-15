@@ -34,13 +34,6 @@ impl KernelLogger {
     pub fn new(framebuffer: &'static mut [u8], info: FrameBufferInfo) -> Self {
         Self(Spinlock::new(Logger::new(framebuffer, info)))
     }
-
-    /// Force-unlocks the logger to prevent a deadlock.
-    ///
-    /// This method is not memory safe and should be only used when absolutely necessary.
-    pub unsafe fn force_unlock(&self) {
-        unsafe { self.0.force_unlock() };
-    }
 }
 
 impl log::Log for KernelLogger {

@@ -18,15 +18,6 @@ impl<const N: usize> StackString<N> {
         unsafe { core::str::from_utf8_unchecked_mut(&mut self.bytes[..self.len]) }
     }
 
-    #[allow(clippy::unused_self)]
-    pub const fn capacity(&self) -> usize {
-        N
-    }
-
-    pub const fn len(&self) -> usize {
-        self.len
-    }
-
     pub fn push(&mut self, c: char) -> Result<(), ()> {
         self.push_byte(c as u8)
     }
