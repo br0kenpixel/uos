@@ -13,6 +13,7 @@ mod heapless;
 mod logger;
 mod mem_stats;
 mod memreg_ex;
+mod time;
 
 use crate::{logger::KernelLogger, mem_stats::mem_stats};
 use alloc::{string::String, vec};
@@ -20,6 +21,7 @@ use alloc_impl::{kernel::KernelAllocator, ALLOCATOR};
 use bootloader_api::{config::Mapping, BootInfo};
 use core::{arch::asm, panic::PanicInfo};
 use log::{debug, info};
+use time::{cputs::cpu_timestamp_counter, sleep::sleep_cycles};
 use ubyte::ToByteUnit;
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
@@ -54,6 +56,10 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         cpu.physical_cores(),
         cpu.logical_cores()
     );
+
+    debug!("{}", cpu_timestamp_counter());
+    sleep_cycles(10000);
+    info!("After sleep");
 
     loop {
         unsafe {
