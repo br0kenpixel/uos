@@ -1,19 +1,18 @@
 use crate::heapless::strings::StackString;
 use core::arch::x86_64::{CpuidResult, __cpuid, __cpuid_count};
-use log::debug;
 use request::RequestType;
 
 mod request;
 
+type BrandString = StackString<BRAND_LENGTH>;
+type VendorString = StackString<VENDOR_LENGTH>;
+
 const VENDOR_LENGTH: usize = 12;
 const BRAND_LENGTH: usize = (4 * 4) * 3;
 
-pub type Brand = StackString<BRAND_LENGTH>;
-pub type Vendor = StackString<VENDOR_LENGTH>;
-
 pub struct CpuInfo {
-    brand_string: Brand,
-    vendor_string: Vendor,
+    brand_string: BrandString,
+    vendor_string: VendorString,
     physical_cores: u8,
     logical_cores: u8,
 }
@@ -38,15 +37,11 @@ impl CpuInfo {
 
 impl Default for CpuInfo {
     fn default() -> Self {
-        let mut brand_string: Brand = read_brand_string().into();
-        let vendor_string = read_vendor_string().into();
+        let mut brand_string: BrandString = read_brand_string().try_into().unwrap();
+        let vendor_string = read_vendor_string().try_into().unwrap();
 
-        if brand_string.starts_with(' ') {
-            debug!("CPU brand string needs cleaning");
-
-            let trimmed = brand_string.trim_start();
-            brand_string = trimmed.try_into().unwrap();
-        }
+        // Clean up spaces
+        brand_string = brand_string.trim().try_into().unwrap();
 
         Self {
             brand_string,
