@@ -15,6 +15,11 @@ fn main() {
         cmd.arg("-drive")
             .arg(format!("format=raw,file={bios_path}"));
     }
+
+    #[cfg(target_os = "linux")]
+    cmd.arg("-enable-kvm");
+    cmd.arg("-cpu").arg("host");
+
     let mut child = cmd.spawn().unwrap();
     child.wait().unwrap();
 }
