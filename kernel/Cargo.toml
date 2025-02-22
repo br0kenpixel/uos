@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bootloader_api = "0.11.7"
+bootloader_api = "0.11.10"
 conquer-once = { version = "0.4.0", default-features = false }
-log = "0.4.21"
+log = { version = "0.4.25", default-features = false }
 noto-sans-mono-bitmap = { version = "0.1.2", features = ["size_24"] }
 spinning_top = "0.3.0"
 linked_list_allocator = "0.10.5"
