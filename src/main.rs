@@ -16,9 +16,12 @@ fn main() {
             .arg(format!("format=raw,file={bios_path}"));
     }
 
+    // enable KVM acceleration and CPU passtrough on Linux
     #[cfg(target_os = "linux")]
-    cmd.arg("-enable-kvm");
-    cmd.arg("-cpu").arg("host");
+    {
+        cmd.arg("-enable-kvm");
+        cmd.arg("-cpu").arg("host");
+    }
 
     let mut child = cmd.spawn().unwrap();
     child.wait().unwrap();
