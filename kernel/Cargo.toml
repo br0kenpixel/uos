@@ -1,14 +1,14 @@
 [package]
 name = "kernel"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [[bin]]
 name = "kernel"
 harness = false
 
 [dependencies]
-bootloader_api = "0.11.10"
+bootloader_api = "0.11.12"
 conquer-once = { version = "0.4.0", default-features = false }
 log = { version = "0.4.25", default-features = false }
 noto-sans-mono-bitmap = { version = "0.1.2", features = ["size_24"] }
