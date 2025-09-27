@@ -15,6 +15,7 @@ pub struct CpuInfo {
     vendor_string: VendorString,
     physical_cores: u8,
     logical_cores: u8,
+    has_invariant_tsc: bool,
 }
 
 impl CpuInfo {
@@ -33,6 +34,10 @@ impl CpuInfo {
     pub const fn logical_cores(&self) -> u8 {
         self.logical_cores
     }
+
+    pub const fn has_invariant_tsc(&self) -> bool {
+        self.has_invariant_tsc
+    }
 }
 
 impl Default for CpuInfo {
@@ -48,6 +53,7 @@ impl Default for CpuInfo {
             vendor_string,
             physical_cores: get_physical_cores(),
             logical_cores: get_logical_cores(),
+            has_invariant_tsc: has_invariant_tsc(),
         }
     }
 }
@@ -95,6 +101,13 @@ fn read_brand_string() -> [u8; BRAND_LENGTH] {
     brand_string_bytes[32..48].copy_from_slice(&third);
 
     brand_string_bytes
+}
+
+fn has_invariant_tsc() -> bool {
+    let res = safe_cpuid(RequestType::TscInvariantStatus);
+
+    // read the 8th bit of the EDX register
+    res.edx & (1 << 8) != 0
 }
 
 fn cpuid_result_to_bytes(res: CpuidResult) -> [u8; 16] {

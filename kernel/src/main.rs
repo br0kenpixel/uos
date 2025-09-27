@@ -16,10 +16,10 @@ mod serial;
 
 use crate::{logger::KernelLogger, mem_stats::mem_stats};
 use alloc::{string::String, vec};
-use alloc_impl::{kernel::KernelAllocator, ALLOCATOR};
-use bootloader_api::{config::Mapping, BootInfo};
+use alloc_impl::{ALLOCATOR, kernel::KernelAllocator};
+use bootloader_api::{BootInfo, config::Mapping};
 use core::{arch::asm, panic::PanicInfo};
-use log::{debug, info};
+use log::{debug, info, warn};
 use ubyte::ToByteUnit;
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
@@ -54,6 +54,12 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         cpu.physical_cores(),
         cpu.logical_cores()
     );
+
+    if !cpu.has_invariant_tsc() {
+        warn!("CPU reports variable TSC, sleep calls will be inaccurate");
+    } else {
+        debug!("CPU reports invariable TSC");
+    }
 
     loop {
         unsafe {
