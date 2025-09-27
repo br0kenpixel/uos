@@ -61,6 +61,10 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         debug!("CPU reports invariable TSC");
     }
 
+    if cpu.hypervisor_present() {
+        debug!("Virtual machine detected");
+    }
+
     loop {
         unsafe {
             asm!("NOP");

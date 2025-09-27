@@ -16,6 +16,7 @@ pub struct CpuInfo {
     physical_cores: u8,
     logical_cores: u8,
     has_invariant_tsc: bool,
+    hypervisor_present: bool,
 }
 
 impl CpuInfo {
@@ -38,6 +39,10 @@ impl CpuInfo {
     pub const fn has_invariant_tsc(&self) -> bool {
         self.has_invariant_tsc
     }
+
+    pub const fn hypervisor_present(&self) -> bool {
+        self.hypervisor_present
+    }
 }
 
 impl Default for CpuInfo {
@@ -54,6 +59,7 @@ impl Default for CpuInfo {
             physical_cores: get_physical_cores(),
             logical_cores: get_logical_cores(),
             has_invariant_tsc: has_invariant_tsc(),
+            hypervisor_present: hypervisor_present(),
         }
     }
 }
@@ -108,6 +114,13 @@ fn has_invariant_tsc() -> bool {
 
     // read the 8th bit of the EDX register
     res.edx & (1 << 8) != 0
+}
+
+fn hypervisor_present() -> bool {
+    let res = safe_cpuid(RequestType::Features);
+
+    // read the 31st bit of the ECX register
+    (res.ecx & (1 << 31)) != 0
 }
 
 fn cpuid_result_to_bytes(res: CpuidResult) -> [u8; 16] {
