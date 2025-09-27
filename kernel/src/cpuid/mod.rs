@@ -37,8 +37,8 @@ impl CpuInfo {
 
 impl Default for CpuInfo {
     fn default() -> Self {
-        let mut brand_string: BrandString = read_brand_string().try_into().unwrap();
-        let vendor_string = read_vendor_string().try_into().unwrap();
+        let mut brand_string: BrandString = read_brand_string().into();
+        let vendor_string = read_vendor_string().into();
 
         // Clean up spaces
         brand_string = brand_string.trim().try_into().unwrap();
