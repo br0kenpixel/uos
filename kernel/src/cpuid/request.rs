@@ -6,4 +6,5 @@ pub(super) enum RequestType {
     BrandString1 = 0x8000_0002,
     BrandString2 = 0x8000_0003,
     BrandString3 = 0x8000_0004,
+    TscInvariantStatus = 0x8000_0007,
 }
