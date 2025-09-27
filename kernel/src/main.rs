@@ -7,7 +7,7 @@
 extern crate alloc;
 
 mod alloc_impl;
-mod cpuid;
+mod cpu;
 mod heapless;
 mod logger;
 mod mem_stats;
@@ -46,22 +46,26 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let _text = String::from("Hello, World! This is some example text! :)");
 
     debug!("Detecting CPU...");
-    let cpu = cpuid::CpuInfo::default();
     debug!(
-        "CPU: [{}] {}, {}xC {}xT",
-        cpu.vendor(),
-        cpu.brand(),
-        cpu.physical_cores(),
-        cpu.logical_cores()
+        "CPU: [{}] {}, {} cores, {} threads, {}",
+        cpu::features::read_vendor_string(),
+        cpu::features::read_brand_string(),
+        cpu::features::get_physical_cores(),
+        cpu::features::get_logical_cores(),
+        if cpu::features::get_hyperthreading() {
+            "hyperthreaded"
+        } else {
+            "non-hyperthreaded"
+        }
     );
 
-    if !cpu.has_invariant_tsc() {
+    if !cpu::features::has_invariant_tsc() {
         warn!("CPU reports variable TSC, sleep calls will be inaccurate");
     } else {
         debug!("CPU reports invariable TSC");
     }
 
-    if cpu.hypervisor_present() {
+    if cpu::features::hypervisor_present() {
         debug!("Virtual machine detected");
     }
 
