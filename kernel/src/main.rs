@@ -8,7 +8,6 @@ extern crate alloc;
 
 mod alloc_impl;
 mod cpu;
-mod heapless;
 mod logger;
 mod mem_stats;
 mod memreg_ex;
