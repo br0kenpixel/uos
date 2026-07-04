@@ -1,5 +1,6 @@
 // src: https://github.com/rust-osdev/bootloader/blob/main/common/src/logger.rs
 
+use crate::serial::SerialPort;
 use bootloader_api::info::{FrameBufferInfo, PixelFormat};
 use conquer_once::spin::OnceCell;
 use core::{
@@ -56,6 +57,7 @@ pub struct Logger {
     info: FrameBufferInfo,
     x_pos: usize,
     y_pos: usize,
+    serial: SerialPort,
 }
 
 impl Logger {
@@ -66,6 +68,7 @@ impl Logger {
             info,
             x_pos: 0,
             y_pos: 0,
+            serial: SerialPort::init(),
         };
         logger.clear();
         logger
@@ -148,6 +151,8 @@ unsafe impl Sync for Logger {}
 
 impl fmt::Write for Logger {
     fn write_str(&mut self, s: &str) -> fmt::Result {
+        // Mirror the output to the serial port (terminal via QEMU).
+        let _ = self.serial.write_str(s);
         for c in s.chars() {
             self.write_char(c);
         }

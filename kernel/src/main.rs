@@ -12,6 +12,7 @@ mod heapless;
 mod logger;
 mod mem_stats;
 mod memreg_ex;
+mod serial;
 
 use crate::{logger::KernelLogger, mem_stats::mem_stats};
 use alloc::{string::String, vec};

@@ -19,8 +19,18 @@ fn main() {
     // enable KVM acceleration and CPU passtrough on Linux
     #[cfg(target_os = "linux")]
     {
-        cmd.arg("-enable-kvm");
-        cmd.arg("-cpu").arg("host");
+        if std::path::Path::new("/dev/kvm").exists() {
+            cmd.arg("-enable-kvm");
+            cmd.arg("-cpu").arg("host");
+        }
+
+        if std::env::var_os("WSL_DISTRO_NAME").is_some() {
+            // no GUI window under WSL; serial is routed to this terminal
+            cmd.arg("-nographic");
+        } else {
+            // keep the framebuffer window, but also mirror serial here
+            cmd.args(["-serial", "stdio"]);
+        }
     }
 
     let mut child = cmd.spawn().unwrap();
