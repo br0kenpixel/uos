@@ -63,6 +63,6 @@ unsafe impl Allocator for RegionAllocator {
             ptr.addr(),
             self.metadata().start()
         );
-        self.0.lock().deallocate(ptr, layout);
+        unsafe { self.0.lock().deallocate(ptr, layout) };
     }
 }

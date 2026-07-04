@@ -67,7 +67,7 @@ unsafe impl Allocator for KernelAllocator {
                 (allocator.metadata().start() as usize)..(allocator.metadata().end() as usize);
 
             if allocator_region.contains(&ptr.addr().get()) {
-                allocator.deallocate(ptr, layout);
+                unsafe { allocator.deallocate(ptr, layout) };
                 return;
             }
         }

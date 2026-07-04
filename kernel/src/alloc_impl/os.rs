@@ -22,7 +22,7 @@ impl OsAllocator {
 unsafe impl GlobalAlloc for OsAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let guard = self.0.lock();
-        let allocator = guard.assume_init_ref();
+        let allocator = unsafe { guard.assume_init_ref() };
         let ptr = allocator.allocate(layout).unwrap();
         let ptr = ptr.as_ptr();
 
@@ -31,8 +31,8 @@ unsafe impl GlobalAlloc for OsAllocator {
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         let guard = self.0.lock();
-        let allocator = guard.assume_init_ref();
+        let allocator = unsafe { guard.assume_init_ref() };
 
-        allocator.deallocate(NonNull::new_unchecked(ptr), layout);
+        unsafe { allocator.deallocate(NonNull::new_unchecked(ptr), layout) };
     }
 }
