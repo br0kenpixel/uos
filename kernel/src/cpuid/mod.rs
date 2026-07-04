@@ -1,5 +1,5 @@
 use crate::heapless::strings::StackString;
-use core::arch::x86_64::{CpuidResult, __cpuid, __cpuid_count};
+use core::arch::x86_64::{__cpuid, __cpuid_count, CpuidResult};
 use request::RequestType;
 
 mod request;
@@ -112,9 +112,9 @@ fn cpuid_result_to_bytes(res: CpuidResult) -> [u8; 16] {
 }
 
 fn safe_cpuid(req: RequestType) -> CpuidResult {
-    unsafe { __cpuid(req as u32) }
+    __cpuid(req as u32)
 }
 
 fn safe_cpuid_count(req: RequestType, sub_leaf: u32) -> CpuidResult {
-    unsafe { __cpuid_count(req as u32, sub_leaf) }
+    __cpuid_count(req as u32, sub_leaf)
 }
