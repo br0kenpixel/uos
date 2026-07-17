@@ -75,9 +75,8 @@ pub fn read_brand_string() -> heapless::String<BRAND_LENGTH> {
                 if last_was_space {
                     brand_string_bytes.pop();
                     break 'outer;
-                } else {
-                    last_was_space = true;
                 }
+                last_was_space = true;
             } else if last_was_space {
                 last_was_space = false;
             }

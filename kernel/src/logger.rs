@@ -8,7 +8,7 @@ use core::{
     ptr,
 };
 use log::LevelFilter;
-use noto_sans_mono_bitmap::{get_bitmap, get_bitmap_width, BitmapChar, BitmapHeight, FontWeight};
+use noto_sans_mono_bitmap::{BitmapChar, BitmapHeight, FontWeight, get_bitmap, get_bitmap_width};
 use spinning_top::Spinlock;
 
 /// The global logger instance used for the `log` crate.
@@ -79,11 +79,11 @@ impl Logger {
         self.carriage_return();
     }
 
-    fn add_vspace(&mut self, space: usize) {
+    const fn add_vspace(&mut self, space: usize) {
         self.y_pos += space;
     }
 
-    fn carriage_return(&mut self) {
+    const fn carriage_return(&mut self) {
         self.x_pos = 0;
     }
 
