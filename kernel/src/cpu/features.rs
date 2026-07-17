@@ -1,4 +1,4 @@
-use core::arch::x86_64::{__cpuid, __cpuid_count, CpuidResult};
+use core::arch::x86_64::{__cpuid, __cpuid_count, __rdtscp, CpuidResult};
 
 const VENDOR_LENGTH: usize = 12;
 const BRAND_LENGTH: usize = (4 * 4) * 3;
@@ -100,6 +100,13 @@ pub fn hypervisor_present() -> bool {
 
     // read the 31st bit of the ECX register
     (res.ecx & (1 << 31)) != 0
+}
+
+pub fn read_tsc() -> u64 {
+    let mut aux: u32 = 0;
+    let cycles = unsafe { __rdtscp(&mut aux) };
+
+    cycles
 }
 
 fn cpuid_result_to_bytes(res: CpuidResult) -> [u8; 16] {

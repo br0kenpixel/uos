@@ -69,6 +69,8 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         debug!("Virtual machine detected");
     }
 
+    debug!("tsc: current: {}", cpu::features::read_tsc());
+
     loop {
         unsafe {
             asm!("NOP");
