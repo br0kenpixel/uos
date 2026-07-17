@@ -118,9 +118,9 @@ fn cpuid_result_to_bytes(res: CpuidResult) -> [u8; 16] {
 }
 
 fn safe_cpuid(req: CpuidRequest) -> CpuidResult {
-    unsafe { __cpuid(req as u32) }
+    __cpuid(req as u32)
 }
 
 fn safe_cpuid_count(req: CpuidRequest, sub_leaf: u32) -> CpuidResult {
-    unsafe { __cpuid_count(req as u32, sub_leaf) }
+    __cpuid_count(req as u32, sub_leaf)
 }
