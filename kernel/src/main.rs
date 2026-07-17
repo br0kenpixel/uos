@@ -59,9 +59,10 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     );
 
     if !cpu::features::has_invariant_tsc() {
-        warn!("CPU reports variable TSC, sleep calls will be inaccurate");
+        warn!("tsc: Invariant NOT available");
+        warn!("tsc: Monotonic clock will not be stable!");
     } else {
-        debug!("CPU reports invariable TSC");
+        debug!("tsc: Invariant available");
     }
 
     if cpu::features::hypervisor_present() {

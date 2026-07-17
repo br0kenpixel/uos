@@ -81,7 +81,7 @@ pub fn read_brand_string() -> heapless::String<BRAND_LENGTH> {
                 last_was_space = false;
             }
 
-            brand_string_bytes.push(result_byte);
+            let _ = brand_string_bytes.push(result_byte);
         }
     }
 
